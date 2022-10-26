@@ -1,0 +1,24 @@
+{
+  "name": "githook",
+  "version": "1.0.0",
+  "description": "githook相关的试验",
+  "main": "index.js",
+  "scripts": {
+    "prepare": "husky install",
+    "compressImg": "node ./compressImg.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/P4X666/githook.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/P4X666/githook/issues"
+  },
+  "homepage": "https://github.com/P4X666/githook#readme",
+  "devDependencies": {
+    "husky": "^8.0.1"
+  }
+}
