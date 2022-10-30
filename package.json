@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/P4X666/githook#readme",
   "devDependencies": {
-    "husky": "^8.0.1"
+    "husky": "^8.0.1",
+    "tinify": "^1.7.1"
   }
 }
