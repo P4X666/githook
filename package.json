@@ -6,6 +6,7 @@
   "scripts": {
     "prepare": "husky install",
     "compressImg": "node ./compressImg.js",
+    "pre": "node ./pre-commit.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
