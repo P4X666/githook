@@ -18,7 +18,7 @@ console.log(diffContent);
 /** 获取新增的 png jpg 图片 */
 const result = diffContent
   .match(/(?<=Binary files)(.+)(?=differ)/g)
-  .map((item) => item.split(" and ")[1].trim())
+  .map((item) => item?.includes(" and ") ? item.split(" and ")[1].trim() : '')
   .filter((item) => item.includes("jpg") || item.includes("png"))
   .map((item) => item.slice(1));
 
