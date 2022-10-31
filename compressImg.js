@@ -13,6 +13,8 @@ const name = execSync("git show -s --format=%cn").toString().trim(); //姓名
 const email = execSync("git show -s --format=%ce").toString().trim(); //邮箱
 const diffContent = execSync("git diff --cached").toString().trim(); //diff后的内容
 
+console.log(diffContent);
+
 /** 获取新增的 png jpg 图片 */
 const result = diffContent
   .match(/(?<=Binary files)(.+)(?=differ)/g)
