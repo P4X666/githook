@@ -20,7 +20,7 @@ const result = diffContent
   .match(/(?<=Binary files)(.+)(?=differ)/g)
   .map((item) => item?.includes(" and ") ? item.split(" and ")[1].trim() : '')
   .filter((item) => item.includes("jpg") || item.includes("png"))
-  .map((item) => item.slice(1));
+  .map((item) => item.slice(1)) ?? [];
 
 if (result.length === 0) {
   console.log("此次没有图片更新");
