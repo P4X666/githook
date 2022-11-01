@@ -33,12 +33,14 @@ if (diffContent.includes("auto commit message by")) {
     /(?<=auto commit message by)(.+)(?=replace image end)/g
   );
   const [userInfo] = autoMessage;
-  const [userName, userEmail] = userInfo.split("::");
-  console.log("userName:", userName, "userEmail:", userEmail);
-  if (userName.trim() === name) {
-    console.log("该用户之前已经自动提交过了");
+  if (userInfo.trim() && userInfo.includes("::")) {
+    const [userName, userEmail] = userInfo.split("::");
+    console.log("userName:", userName, "userEmail:", userEmail);
+    if (userName.trim() === name) {
+      console.log("该用户之前已经自动提交过了");
+    }
+    return;
   }
-  return;
 }
 
 /** 获取新增的 png jpg 图片 */
