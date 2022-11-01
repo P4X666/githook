@@ -11,9 +11,21 @@ const getSize = (path) => fs.statSync(path).size / 1024;
 
 const name = execSync("git show -s --format=%cn").toString().trim(); //姓名
 const email = execSync("git show -s --format=%ce").toString().trim(); //邮箱
-const diffContent = execSync("git diff --cached").toString().trim(); //diff后的内容
+const diffContent = execSync("git log -p -1").toString().trim(); //diff后的内容
 
-console.log(diffContent);
+if(!diffContent){
+  console.log("没有 diff 内容");
+  return;
+}
+
+// 自动提交的容错处理
+if(diffContent.includes("auto commit message")){
+  const autoMessage = diffContent.match(/(?<=auto commit message)(.+)(?=replace image end;)/g);
+  console.log("autoMessage: ", autoMessage);
+  return;
+}
+
+console.log("diff 内容",diffContent);
 
 /** 获取新增的 png jpg 图片 */
 const result = diffContent
@@ -32,6 +44,7 @@ tinify.key = TINIFYKEY;
 
 const sourceArr = [];
 result.forEach(async(item) => {
+  console.log("item:", item);
   const imgPath = __dirname + item;
   const oldImgSize = getSize(imgPath);
   const source = tinify.fromFile(imgPath);
@@ -44,10 +57,14 @@ Promise.all(sourceArr.map(([source, imgPath]) => source.toFile(imgPath)))
   .then(
   (values) => {
     if (values.every((item) => item === undefined)) {
+      console.log("==============");
       console.log("replace success");
+      console.log("==============");
       const filePath = sourceArr.reduce(
-        ([, imgPath, pre, oldImgSize], [, , cur]) => {
-          if (pre) {
+        (preItem, [, , cur]) => {
+          console.log("cur：", preItem, cur);
+          if (preItem) {
+            const [, imgPath, pre, oldImgSize] = preItem;
             const newImgSize = getSize(imgPath);
             const diffSize = (newImgSize - oldImgSize).toFixed(1);
             console.log(
@@ -59,8 +76,11 @@ Promise.all(sourceArr.map(([source, imgPath]) => source.toFile(imgPath)))
         },
         ""
       );
-      
-      execSync(`git commit ${filePath} -m "replace image"`);
+      console.log("filePath:", filePath);
+      execSync(`git add ${filePath}`);
+      // setTimeout(() => {
+      //   execSync(`git commit -m "auto commit message"`);
+      // }, 500);
     }
   }
 );
