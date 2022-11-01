@@ -3,8 +3,11 @@ const TINIFYKEY = "8tDFVWHMZqj02PpFfnBXq82hqrDKyz0B";
 
 const fs = require("fs");
 const path = require("path");
-// const exec = require("child_process").exec; //异步子进程
 const execSync = require("child_process").execSync; //同步子进程
+
+execSync(`git add .`);
+execSync(`git commit -m "auto commit message"`);
+return;
 
 /** 获取文件大小 */
 const getSize = (path) => fs.statSync(path).size / 1024;
