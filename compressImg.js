@@ -95,6 +95,7 @@ Promise.all(sourceArr.map(([source, imgPath]) => source.toFile(imgPath))).then(
       execSync(
         `git commit -m "auto commit message by ${name} :: ${email} replace image end"`
       );
+      // execSync("git push origin master:master");
     } else {
       recordText(`
       压缩失败：${os.EOL}
