@@ -1,5 +1,7 @@
 // https://tinify.cn/dashboard/api
 const TINIFYKEY = "8tDFVWHMZqj02PpFfnBXq82hqrDKyz0B";
+// 自定义的自动提交的 git commit message
+const [messageStart, messageEnd] = ["auto commit message by", "replace image end"];
 
 const fs = require("fs");
 const path = require("path");
@@ -28,9 +30,10 @@ if (!diffContent) {
 }
 
 // 自动提交的容错处理 防止重复提交
-if (diffContent.includes("auto commit message by")) {
+const 
+if (diffContent.includes(messageStart)) {
   const autoMessage = diffContent.match(
-    /(?<=auto commit message by)(.+)(?=replace image end)/g
+    new RegExp(`(?<=${messageStart})(.+)(?=${messageEnd})`, "g")
   );
   const [userInfo] = autoMessage;
   if (userInfo.trim() && userInfo.includes("::")) {
@@ -38,8 +41,8 @@ if (diffContent.includes("auto commit message by")) {
     console.log("userName:", userName, "userEmail:", userEmail);
     if (userName.trim() === name) {
       console.log("该用户之前已经自动提交过了");
+      return;
     }
-    return;
   }
 }
 
@@ -93,7 +96,7 @@ Promise.all(sourceArr.map(([source, imgPath]) => source.toFile(imgPath))).then(
       recordText(recordData);
       execSync(`git add ${filePath}`);
       execSync(
-        `git commit -m "auto commit message by ${name} :: ${email} replace image end"`
+        `git commit -m "${messageStart} ${name} :: ${email} ${messageEnd}"`
       );
       // execSync("git push origin master:master");
     } else {
@@ -104,3 +107,4 @@ Promise.all(sourceArr.map(([source, imgPath]) => source.toFile(imgPath))).then(
     }
   }
 );
+process.exit()
