@@ -1,7 +1,10 @@
 // https://tinify.cn/dashboard/api
 const TINIFYKEY = "8tDFVWHMZqj02PpFfnBXq82hqrDKyz0B";
 // 自定义的自动提交的 git commit message
-const [messageStart, messageEnd] = ["auto commit message by", "replace image end"];
+const [messageStart, messageEnd] = [
+  "auto commit message by",
+  "replace image end",
+];
 
 const fs = require("fs");
 const path = require("path");
@@ -30,7 +33,6 @@ if (!diffContent) {
 }
 
 // 自动提交的容错处理 防止重复提交
-const 
 if (diffContent.includes(messageStart)) {
   const autoMessage = diffContent.match(
     new RegExp(`(?<=${messageStart})(.+)(?=${messageEnd})`, "g")
@@ -102,9 +104,8 @@ Promise.all(sourceArr.map(([source, imgPath]) => source.toFile(imgPath))).then(
     } else {
       recordText(`
       压缩失败：${os.EOL}
-        ${sourceArr.map(([, , relativePath]) => relativePath+",")}
+        ${sourceArr.map(([, , relativePath]) => relativePath + ",")}
       `);
     }
   }
 );
-process.exit()
