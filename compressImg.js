@@ -5,9 +5,12 @@ const [messageStart, messageEnd] = [
   "auto commit message by",
   "replace image end",
 ];
+/** 分隔符 */
+const separator = "::";
+/** 需要压缩的图片类型 */
+const imgType = ["jpg", "png"]
 
 const fs = require("fs");
-const path = require("path");
 const execSync = require("child_process").execSync; //同步子进程
 const os = require("os");
 
@@ -38,8 +41,8 @@ if (diffContent.includes(messageStart)) {
     new RegExp(`(?<=${messageStart})(.+)(?=${messageEnd})`, "g")
   );
   const [userInfo] = autoMessage;
-  if (userInfo.trim() && userInfo.includes("::")) {
-    const [userName, userEmail] = userInfo.split("::");
+  if (userInfo.trim() && userInfo.includes(separator)) {
+    const [userName, userEmail] = userInfo.split(separator);
     console.log("userName:", userName, "userEmail:", userEmail);
     if (userName.trim() === name) {
       console.log("该用户之前已经自动提交过了");
@@ -55,7 +58,7 @@ const result =
     ?.map((item) =>
       item?.includes(" and ") ? item.split(" and ")[1].trim() : ""
     )
-    ?.filter((item) => item.includes("jpg") || item.includes("png"))
+    ?.filter((item) => imgType.some(type => item.includes(type)))
     ?.map((item) => item.slice(1)) ?? [];
 
 if (result.length === 0) {
@@ -67,7 +70,7 @@ const tinify = require("tinify");
 tinify.key = TINIFYKEY;
 
 const sourceArr = [];
-result.forEach(async (item) => {
+result.forEach((item) => {
   const imgPath = __dirname + item;
   const oldImgSize = getSize(imgPath);
   const source = tinify.fromFile(imgPath);
@@ -84,8 +87,8 @@ Promise.all(sourceArr.map(([source, imgPath]) => source.toFile(imgPath))).then(
         (preItem, [, imgPath, cur, oldImgSize]) => {
           // 记录图片大小变化
           const newImgSize = getSize(imgPath);
-          const diffSize = (newImgSize - oldImgSize).toFixed(1);
-          recordData += `.${cur} 压缩之前大小：${oldImgSize}，压缩后的大小：${newImgSize}，缩小了约${diffSize}kb ${os.EOL}`;
+          const diffSize = (oldImgSize - newImgSize).toFixed(1);
+          recordData += `.${cur} 压缩之前大小：${oldImgSize}kb，压缩后的大小：${newImgSize}kb，缩小了约${diffSize}kb ${os.EOL}`;
           // 第一个不做处理
           if (preItem) {
             const [, , pre] = preItem;
@@ -98,7 +101,7 @@ Promise.all(sourceArr.map(([source, imgPath]) => source.toFile(imgPath))).then(
       recordText(recordData);
       execSync(`git add ${filePath}`);
       execSync(
-        `git commit -m "${messageStart} ${name} :: ${email} ${messageEnd}"`
+        `git commit -m "${messageStart} ${name} ${separator} ${email} ${messageEnd}"`
       );
       // execSync("git push origin master:master");
     } else {
